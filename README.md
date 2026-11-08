@@ -11,17 +11,16 @@ Applications*):
   (`search()`).
 - **Feature 2** — the triage agent: a bounded tool-calling loop built on top of `search()`,
   producing a verified structured `TriageResult`, measured end-to-end against named baselines.
-
-Feature 3 (an HTTP API and web UI) has not started.
+- **Feature 3** — a FastAPI edge (`app/api.py`) and a Next.js web UI (`web/`): a landing page and a
+  triage chat interface, calling the same verified pipeline as the CLI.
 
 ## Why
 
 A triage assistant that is confidently wrong is worse than one that says "I don't know" — a
 plausible-sounding but wrong T-code sequence, acted on at 2am, is the worst possible output. This
-feature exists to prove the retrieval underneath that assistant actually works, honestly measured
-against named baselines, before any language model ever touches the data. See
-[`.specify/memory/constitution.md`](.specify/memory/constitution.md) for the full governing
-principles (Evaluation-First, Honest Reporting, Grounded Answers Only).
+project exists to prove the retrieval underneath that assistant actually works, honestly measured
+against named baselines, before any language model ever touches the data — governed by three
+principles: Evaluation-First, Honest Reporting, Grounded Answers Only.
 
 ## Setup
 
@@ -160,21 +159,56 @@ search itself.
 
 Full detail: [`eval/results/results.md`](eval/results/results.md) § Limitations.
 
+## Web UI (Feature 3)
+
+```bash
+uv sync --extra api
+uv run uvicorn app.api:app --port 8000          # terminal 1 — backend
+cd web && npm install && npm run dev             # terminal 2 — http://localhost:3000
+```
+
+The Next.js dev server proxies `/api/*` to the FastAPI backend on `:8000` (same-origin, no CORS —
+see `web/next.config.ts`). `/` is the landing page, `/triage` is the chat interface; both call the
+same verified `triage()` pipeline the CLI uses.
+
+### Deploying (Render + Vercel)
+
+Backend and frontend deploy separately, on different origins — unlike local dev they can't share
+`localhost`, so two things bridge the gap: `API_BASE_URL` (frontend → backend) and `ALLOWED_ORIGINS`
+(backend's CORS allow-list, since the frontend now calls a different origin instead of same-origin
+through the dev proxy).
+
+**1. Backend on Render** — `render.yaml` at the repo root is a ready-to-use blueprint
+(New → Blueprint → pick this repo). Set these env vars in the Render dashboard after it's created:
+- `OPENAI_API_KEY`, `OPENAI_BASE_URL` — same values as your local `.env`
+- `ALLOWED_ORIGINS` — the Vercel URL from step 2 (set after step 2, once you know it; Render
+  redeploys automatically on env var changes)
+
+Note the backend's `https://<name>.onrender.com` URL once it's live.
+
+**2. Frontend on Vercel** — New Project → import this repo → set **Root Directory** to `web`. Add
+one env var before the first deploy:
+- `API_BASE_URL` — the Render URL from step 1 (e.g. `https://basismedic-api.onrender.com`)
+
+**3. Close the loop** — go back to Render and set `ALLOWED_ORIGINS` to the Vercel URL (e.g.
+`https://basismedic.vercel.app`), comma-separated if you have more than one (e.g. a preview URL).
+
+Free-tier Render services spin down on idle — the first request after a quiet period can take
+10–30s while it wakes up; this is expected, not a bug.
+
 ## Project layout
 
 ```
-app/            config, llm (chat + embed, the only gateway caller), normalize, cli,
+app/            config, llm (chat + embed, the only gateway caller), normalize, cli, api (Feature 3 edge),
                 retrieval/ (Feature 1), agent/ (Feature 2: tools, loop, formatter, verify, fallback),
                 triage_service.py (Feature 2 service entry point)
 data/           runbooks/, tcodes.json, index/ (generated, committed), cache/ + chat_cache/ (generated, ignored)
 eval/           cases_dev.jsonl, cases_test.jsonl, schema, metrics, run_retrieval, run_e2e, run_all, results/
 examples/       sample logs for the commands above (never runbook text)
 tests/          offline, gateway mocked — uv run pytest
-specs/001-runbook-retrieval-eval/   Feature 1: spec, plan, research, data model, contracts, tasks
-specs/002-triage-agent/             Feature 2: spec, plan, research, data model, contracts, tasks
+web/            Next.js app (landing page + triage chat), consumes app/api.py
 ```
 
-## Out of scope (both features)
+## Out of scope
 
-Any HTTP API or web UI (Feature 3, not started), multi-turn conversation, connecting to a live SAP
-system, and executing any fix.
+Multi-turn conversation, connecting to a live SAP system, and executing any fix.

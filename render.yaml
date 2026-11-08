@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: basismedic-api
+    runtime: python
+    plan: free
+    buildCommand: pip install uv && uv sync --extra api
+    startCommand: uv run uvicorn app.api:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_BASE_URL
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: EMBED_MODEL
+        value: bge-m3
+      - key: CHAT_MODEL
+        value: gemma-4-E4B-it
+      - key: RETRIEVAL_MODE
+        value: hybrid
+      - key: CHUNK_STRATEGY
+        value: fixed
+      - key: TOP_K
+        value: "3"
+      - key: MIN_SCORE
+        value: "0.60"
+      - key: MAX_STEPS
+        value: "5"
