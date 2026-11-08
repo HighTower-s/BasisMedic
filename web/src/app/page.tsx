@@ -73,7 +73,9 @@ export default function Home() {
   const stepTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
+    // read after mount (not lazy init) to avoid an SSR/client hydration mismatch
     const saved = localStorage.getItem("bm-theme") === "dark";
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsDark(saved);
     document.documentElement.classList.toggle("dark", saved);
   }, []);

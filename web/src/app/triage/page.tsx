@@ -59,7 +59,9 @@ export default function TriagePage() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
+    // read after mount (not lazy init) to avoid an SSR/client hydration mismatch
     const saved = localStorage.getItem(THEME_KEY) === "dark";
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsDark(saved);
     document.documentElement.classList.toggle("dark", saved);
     setHistory(loadHistory());
