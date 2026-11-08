@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"><style>body{margin:0;background:#f0eee9;font-family:Caveat,cursive;color:#14142B}a{color:#14142B}a:hover{color:#FF4E45}.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08)}.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#14142B;color:#fff;border-radius:4px;text-decoration:none}.dv-tname{font:700 22px Caveat,cursive}.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px}.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);border-radius:5px;text-decoration:none}.dv-olabel{display:flex;align-items:baseline;gap:8px;font:500 18px Caveat,cursive}.dv-card{background:#fff;border:1.5px solid #14142B;border-radius:10px;overflow:hidden;box-shadow:3px 3px 0 rgba(20,20,43,.12);font:500 17px Caveat,cursive}.dv-next{margin:22px 0 0;font:500 17px Caveat,cursive;color:rgba(0,0,0,.6)}.b{border:1.5px solid #14142B;border-radius:8px}.l{height:7px;border-radius:4px;background:#d9d7d2}.ln{height:7px;border-radius:4px;background:#14142B}.pill{border:1.5px solid #14142B;border-radius:20px;padding:1px 9px;font-size:15px}.red{background:#FF4E45;color:#fff;border-color:#FF4E45}.mono{font:400 11px 'JetBrains Mono',monospace}.ph{background:repeating-linear-gradient(135deg,#fff 0 7px,#efede8 7px 14px)}.nav{display:flex;align-items:center;gap:14px;padding:10px 16px;border-bottom:1.5px solid #14142B;font-size:17px}</style></helmet>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">BasisMedic: landing + triage chat, first structure pass</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a"><div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Landing hero: split, mock on right</div>
+<div class="dv-card" style="width:560px">
+<div class="nav"><b style="font-size:20px">BasisMedic</b><span>Solutions</span><span>How it works</span><span>Docs</span><span style="margin-left:auto">☾</span><span class="pill red">Try it</span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:28px 20px">
+<div style="display:flex;flex-direction:column;gap:10px"><div style="font:700 32px/1 Caveat">Triage SAP Basis incidents you can trust</div><div class="l"></div><div class="l" style="width:85%"></div><div class="l" style="width:60%"></div>
+<div style="display:flex;gap:8px;margin-top:6px"><span class="pill red">Try BasisMedic</span><span class="pill">View evaluation report</span></div></div>
+<div class="b" style="padding:10px;display:flex;flex-direction:column;gap:7px;box-shadow:3px 3px 0 rgba(20,20,43,.15)"><div class="mono" style="background:#efede8;padding:5px;border-radius:5px">TSV_TNEW_PAGE_ALLOC_FAILED…</div><span class="pill red" style="align-self:flex-start">Memory · urgent</span><div>1 ST22 &nbsp; 2 SM04 &nbsp; 3 ST02</div><div class="l"></div><div class="l" style="width:70%"></div><div style="display:flex;gap:5px"><span class="pill">[1]</span><span class="pill">[2]</span></div></div>
+</div>
+<div style="display:flex;gap:8px;justify-content:center;padding:0 16px 18px"><span class="pill">Evaluation-first</span><span class="pill">Grounded answers only</span><span class="pill">Citations verified by code</span></div>
+</div></div>
+
+<div class="dv-opt" id="1b"><div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Landing hero: centered, mock below</div>
+<div class="dv-card" style="width:560px">
+<div class="nav"><b style="font-size:20px">BasisMedic</b><span style="margin-left:auto">Solutions · How it works · Docs</span><span>☾</span><span class="pill red">Try it</span></div>
+<div style="padding:26px 40px 0;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px"><div style="font:700 38px/1 Caveat">Stop guessing at 2am</div><div class="l" style="width:70%"></div><div class="l" style="width:50%"></div>
+<div style="display:flex;gap:8px;margin:4px 0 14px"><span class="pill red">Try BasisMedic</span><span class="pill">View evaluation report</span></div></div>
+<div class="b" style="margin:0 40px;border-bottom:none;border-radius:8px 8px 0 0;padding:12px;display:grid;grid-template-columns:1fr 1.4fr;gap:10px;height:150px"><div class="mono" style="background:#efede8;padding:6px;border-radius:5px">log pasted…</div><div style="display:flex;flex-direction:column;gap:7px"><span class="pill red" style="align-self:flex-start">Category</span><div>T-codes 1·2·3</div><div class="l"></div><div class="l" style="width:60%"></div></div></div>
+</div></div>
+
+<div class="dv-opt" id="1c"><div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Landing below the fold: trust row, 3 cards, 3 steps, footer</div>
+<div class="dv-card" style="width:560px;padding:18px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;gap:8px;justify-content:center"><span class="pill">Evaluation-first</span><span class="pill">Grounded only</span><span class="pill">Verified by code</span></div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+<div class="b" style="padding:10px;display:flex;flex-direction:column;gap:6px"><div>◇</div><b>Hybrid retrieval, measured</b><div class="l"></div><div class="l" style="width:60%"></div></div>
+<div class="b" style="padding:10px;display:flex;flex-direction:column;gap:6px"><div>✓</div><b>Verified, not trusted</b><div class="l"></div><div class="l" style="width:60%"></div></div>
+<div class="b" style="padding:10px;display:flex;flex-direction:column;gap:6px"><div>∅</div><b>Honest refusal</b><div class="l"></div><div class="l" style="width:60%"></div></div></div>
+<div style="display:flex;align-items:center;gap:8px;justify-content:center"><div class="b" style="padding:8px 12px">1 Paste log</div>→<div class="b" style="padding:8px 12px">2 Agent searches</div>→<div class="b" style="padding:8px 12px">3 Verified result</div></div>
+<div style="background:#14142B;color:#fff;border-radius:8px;padding:12px;display:flex;gap:18px;justify-content:center"><span>GitHub</span><span>Docs</span><span>Evaluation methodology</span></div>
+</div></div>
+
+<div class="dv-opt" id="1d"><div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>Chat empty state, sidebar collapsed</div>
+<div class="dv-card" style="width:560px;height:360px;display:flex;flex-direction:column">
+<div class="nav" style="border:none"><span>☰</span><b>BasisMedic</b><span class="pill" style="margin-left:8px">Hybrid · agent</span><span style="margin-left:auto">☾</span></div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:0 50px">
+<div style="font:700 26px Caveat">What's broken?</div>
+<div class="b" style="width:100%;height:84px;padding:10px;border-color:#FF4E45;border-width:2.5px;border-radius:16px;box-sizing:border-box;position:relative;color:#8a8a99">Paste an error log or describe the incident…<span class="pill red" style="position:absolute;right:10px;bottom:8px">↑</span></div>
+<div style="display:flex;gap:8px"><span class="pill">TSV dump full</span><span class="pill">HANA disk full</span><span class="pill">Background job stuck</span></div></div>
+</div></div>
+
+<div class="dv-opt" id="1e"><div class="dv-olabel"><a class="dv-oid" href="#1e">1e</a>Chat active: sidebar + structured result card</div>
+<div class="dv-card" style="width:640px;height:440px;display:grid;grid-template-columns:130px 1fr">
+<div style="border-right:1.5px solid #14142B;padding:10px;display:flex;flex-direction:column;gap:8px"><span class="pill">+ New</span><div class="l"></div><div class="l" style="width:70%"></div><div class="l"></div><div style="margin-top:auto;display:flex;gap:6px;align-items:center"><span style="width:22px;height:12px;border:1.5px solid #14142B;border-radius:8px;display:inline-block"></span>trace</div></div>
+<div style="padding:12px;display:flex;flex-direction:column;gap:10px;overflow:hidden">
+<div class="mono" style="align-self:flex-start;max-width:70%;background:#efede8;border-radius:10px;padding:8px">SYSTEM_NO_ROLL … TSV_TNEW_PAGE_ALLOC_FAILED<br>program SAPLSMTR…</div>
+<div class="b" style="align-self:flex-end;width:88%;padding:10px;display:flex;flex-direction:column;gap:7px;box-shadow:3px 3px 0 rgba(20,20,43,.15)">
+<div style="display:flex;gap:6px"><span class="pill red">Memory · urgent</span><span class="pill">verified</span></div>
+<div style="display:flex;flex-direction:column;gap:3px"><div>1. ST22 <span class="l" style="display:inline-block;width:70px"></span></div><div>2. SM04 <span class="l" style="display:inline-block;width:90px"></span></div><div>3. ST02 <span class="l" style="display:inline-block;width:60px"></span></div></div>
+<div style="display:flex;flex-direction:column;gap:3px"><div>☐ check heap limit</div><div>☐ review top consumers</div><div>☐ …</div></div>
+<div style="display:flex;gap:5px"><span class="pill">runbook §4.2</span><span class="pill">note 1234</span></div>
+<div class="b" style="border-style:dashed;padding:4px 8px;color:#6a6a7a">▸ trace: search_runbook ×2, lookup_tcode ×3</div></div>
+<div class="b" style="margin-top:auto;padding:6px 10px;color:#8a8a99;border-radius:14px">Ask a follow-up…</div></div>
+</div></div>
+
+<div class="dv-opt" id="1f"><div class="dv-olabel"><a class="dv-oid" href="#1f">1f</a>Chat active: trace as right drawer + out-of-scope card</div>
+<div class="dv-card" style="width:640px;height:440px;display:grid;grid-template-columns:1fr 150px">
+<div style="padding:12px;display:flex;flex-direction:column;gap:10px">
+<div class="mono" style="align-self:flex-start;background:#efede8;border-radius:10px;padding:8px">Dear team, my printer shows a paper jam…</div>
+<div class="b" style="align-self:flex-end;width:85%;padding:12px;display:flex;flex-direction:column;gap:7px;border-color:#6a6a7a">
+<b>No relevant runbook found</b><div class="l"></div><div class="l" style="width:70%"></div><div style="color:#6a6a7a">Out of scope. No answer generated.</div><span class="pill" style="align-self:flex-start">Rephrase or paste full log</span></div>
+<div class="b" style="margin-top:auto;padding:6px 10px;color:#8a8a99;border-radius:14px">Ask a follow-up…</div></div>
+<div style="border-left:1.5px dashed #14142B;padding:10px;display:flex;flex-direction:column;gap:7px;background:#faf9f6"><b>Trace</b><div class="mono">search_runbook(q)<br>→ 0 hits</div><div class="mono">score &lt; threshold<br>→ refuse</div></div>
+</div></div>
+
+<div class="dv-opt" id="1g"><div class="dv-olabel"><a class="dv-oid" href="#1g">1g</a>Citation pill expanded</div>
+<div class="dv-card" style="width:360px;padding:14px;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;gap:6px"><span class="pill" style="background:#14142B;color:#fff">runbook §4.2</span><span class="pill">note 1234</span></div>
+<div class="b" style="padding:10px;display:flex;flex-direction:column;gap:6px"><b>HANA_Disk.md › §4.2 Free log space</b><div class="mono" style="background:#efede8;padding:6px;border-radius:5px">"…check hdbsql disk usage…" (exact quote)</div><span class="pill" style="align-self:flex-start">✓ text matched in source</span></div>
+</div></div>
+
+</div>
+<p class="dv-next">Try next: "go mid-fi with <a class="dv-oid" href="#1a">1a</a> + <a class="dv-oid" href="#1e">1e</a> in real palette and type" · "dark mode for <a class="dv-oid" href="#1e">1e</a>" · "new hero direction"</p>
+</section>
+</x-dc>
+</body>
+</html>
