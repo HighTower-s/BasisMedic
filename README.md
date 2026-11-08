@@ -11,17 +11,16 @@ Applications*):
   (`search()`).
 - **Feature 2** — the triage agent: a bounded tool-calling loop built on top of `search()`,
   producing a verified structured `TriageResult`, measured end-to-end against named baselines.
-
-Feature 3 (an HTTP API and web UI) has not started.
+- **Feature 3** — a FastAPI edge (`app/api.py`) and a Next.js web UI (`web/`): a landing page and a
+  triage chat interface, calling the same verified pipeline as the CLI.
 
 ## Why
 
 A triage assistant that is confidently wrong is worse than one that says "I don't know" — a
 plausible-sounding but wrong T-code sequence, acted on at 2am, is the worst possible output. This
-feature exists to prove the retrieval underneath that assistant actually works, honestly measured
-against named baselines, before any language model ever touches the data. See
-[`.specify/memory/constitution.md`](.specify/memory/constitution.md) for the full governing
-principles (Evaluation-First, Honest Reporting, Grounded Answers Only).
+project exists to prove the retrieval underneath that assistant actually works, honestly measured
+against named baselines, before any language model ever touches the data — governed by three
+principles: Evaluation-First, Honest Reporting, Grounded Answers Only.
 
 ## Setup
 
@@ -160,21 +159,31 @@ search itself.
 
 Full detail: [`eval/results/results.md`](eval/results/results.md) § Limitations.
 
+## Web UI (Feature 3)
+
+```bash
+uv sync --extra api
+uv run uvicorn app.api:app --port 8000          # terminal 1 — backend
+cd web && npm install && npm run dev             # terminal 2 — http://localhost:3000
+```
+
+The Next.js dev server proxies `/api/*` to the FastAPI backend on `:8000` (same-origin, no CORS —
+see `web/next.config.ts`). `/` is the landing page, `/triage` is the chat interface; both call the
+same verified `triage()` pipeline the CLI uses.
+
 ## Project layout
 
 ```
-app/            config, llm (chat + embed, the only gateway caller), normalize, cli,
+app/            config, llm (chat + embed, the only gateway caller), normalize, cli, api (Feature 3 edge),
                 retrieval/ (Feature 1), agent/ (Feature 2: tools, loop, formatter, verify, fallback),
                 triage_service.py (Feature 2 service entry point)
 data/           runbooks/, tcodes.json, index/ (generated, committed), cache/ + chat_cache/ (generated, ignored)
 eval/           cases_dev.jsonl, cases_test.jsonl, schema, metrics, run_retrieval, run_e2e, run_all, results/
 examples/       sample logs for the commands above (never runbook text)
 tests/          offline, gateway mocked — uv run pytest
-specs/001-runbook-retrieval-eval/   Feature 1: spec, plan, research, data model, contracts, tasks
-specs/002-triage-agent/             Feature 2: spec, plan, research, data model, contracts, tasks
+web/            Next.js app (landing page + triage chat), consumes app/api.py
 ```
 
-## Out of scope (both features)
+## Out of scope
 
-Any HTTP API or web UI (Feature 3, not started), multi-turn conversation, connecting to a live SAP
-system, and executing any fix.
+Multi-turn conversation, connecting to a live SAP system, and executing any fix.
