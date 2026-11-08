@@ -11,7 +11,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-api = ["fastapi>=0.115", "uvicorn[standard]>=0.30"]
+api = ["fastapi>=0.115", "uvicorn[standard]>=0.30", "python-dotenv>=1.0"]
 
 [dependency-groups]
 dev = ["pytest>=8.0"]

@@ -30,6 +30,7 @@ https://learning.sap.com/courses/technical-implementation-and-operation-i-of-sap
 7. Starting and Stopping AS ABAP / Configuring SAP Systems via Profile Parameters
 เสริม: Troubleshooting Authorization Checks ○ https://learning.sap.com/courses/exploring-the-authorization-concept-for-sap-s-4hana-and-sap-business-suite/troubleshouting-authorization-checks
 
+
 ## 3. SAP Community / บทความ (มุมปฏิบัติจริง)
 | หัวข้อ | URL | |
 |---|---|---|
