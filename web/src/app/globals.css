@@ -56,6 +56,7 @@
   --bm-dot: rgba(17, 17, 20, .2);
   --bm-mute: rgba(17, 17, 20, .62);
   --bm-faint: rgba(17, 17, 20, .38);
+  --bm-soft: #E7E6E2;
   --bm-red: #FF4E45;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -99,6 +100,7 @@
   --bm-dot: rgba(255, 255, 255, .18);
   --bm-mute: rgba(244, 243, 240, .62);
   --bm-faint: rgba(244, 243, 240, .4);
+  --bm-soft: #222228;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -164,4 +166,8 @@
 @keyframes bmfloat {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
+}
+@keyframes bmpop {
+  from { opacity: 0; transform: scale(.2); }
+  to { opacity: 1; transform: scale(1); }
 }

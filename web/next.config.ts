@@ -4,7 +4,11 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  async rewrites() {
+    return [{ source: "/api/:path*", destination: "http://localhost:8000/api/:path*" }];
+  },
   turbopack: {
+    root: __dirname,
     rules: {
       "*.css": {
         loaders: ["@tailwindcss/turbopack"],

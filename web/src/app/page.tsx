@@ -2,27 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { Logo } from "@/components/logo";
 
 const L1 = "Paste. Verify.";
 const L2 = "Don't guess.";
 const P =
   'Paste an error log. Get a verified category, T-codes, and step-by-step checks. Every citation is checked against real evidence, or you get an honest "nothing relevant" instead of a guess.';
-
-const LOGO_DOTS = ["fg", "red", "", "red", "red", "red", "fg", "red", ""] as const;
-
-function Logo() {
-  return (
-    <span className="grid grid-cols-3 grid-rows-3 gap-[2px] flex-none">
-      {LOGO_DOTS.map((c, i) => (
-        <i
-          key={i}
-          className="h-[7px] w-[7px] rounded-[2px]"
-          style={{ background: c === "red" ? "#FF4E45" : c === "fg" ? "var(--bm-fg)" : "transparent" }}
-        />
-      ))}
-    </span>
-  );
-}
 
 const COVERAGE = [
   {
