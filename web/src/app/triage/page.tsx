@@ -64,6 +64,9 @@ export default function TriagePage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsDark(saved);
     document.documentElement.classList.toggle("dark", saved);
+    // the sidebar is a fixed 260px, not an overlay — on narrow screens it leaves
+    // ~0px for the composer, so start collapsed there
+    if (window.innerWidth < 640) setSideOpen(false);
     setHistory(loadHistory());
   }, []);
 
@@ -128,7 +131,7 @@ export default function TriagePage() {
     <div className="h-screen flex bg-[var(--bm-bg)] text-[var(--bm-fg)] overflow-hidden">
       {/* sidebar */}
       <aside
-        className="flex-none overflow-hidden bg-[var(--bm-soft,var(--bm-card))] transition-[width] duration-200"
+        className="flex-none min-w-0 overflow-hidden bg-[var(--bm-soft,var(--bm-card))] transition-[width] duration-200"
         style={{ width: sideOpen ? 260 : 0 }}
       >
         <div className="w-[260px] h-full p-5 px-4 flex flex-col gap-1.5">
@@ -240,7 +243,7 @@ export default function TriagePage() {
 
         {/* composer */}
         <div
-          className="px-6 pb-6 flex flex-col items-center gap-3.5"
+          className="relative z-10 px-6 pb-6 flex flex-col items-center gap-3.5"
           style={empty ? { marginTop: "-12vh" } : undefined}
         >
           <div

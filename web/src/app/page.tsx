@@ -570,7 +570,7 @@ export default function Home() {
           <span>BasisMedic</span>
         </Link>
         <div className="flex gap-7 font-medium">
-          <a href="https://github.com" target="_blank" rel="noreferrer">
+          <a href="https://github.com/HighTower-s/BasisMedic" target="_blank" rel="noreferrer">
             GitHub
           </a>
         </div>
