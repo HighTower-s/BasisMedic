@@ -84,3 +84,10 @@ def top_k() -> int:
 
 def min_score() -> float:
     return _float("MIN_SCORE", 0.40)
+
+
+def allowed_origins() -> list[str]:
+    """CORS origins the API accepts requests from (comma-separated). Only needed when the
+    web frontend is deployed on a different origin than the API — same-origin dev via the
+    Next.js rewrite needs no CORS at all."""
+    return [origin.strip() for origin in _str("ALLOWED_ORIGINS", "http://localhost:3000").split(",") if origin.strip()]

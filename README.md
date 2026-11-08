@@ -171,6 +171,31 @@ The Next.js dev server proxies `/api/*` to the FastAPI backend on `:8000` (same-
 see `web/next.config.ts`). `/` is the landing page, `/triage` is the chat interface; both call the
 same verified `triage()` pipeline the CLI uses.
 
+### Deploying (Render + Vercel)
+
+Backend and frontend deploy separately, on different origins — unlike local dev they can't share
+`localhost`, so two things bridge the gap: `API_BASE_URL` (frontend → backend) and `ALLOWED_ORIGINS`
+(backend's CORS allow-list, since the frontend now calls a different origin instead of same-origin
+through the dev proxy).
+
+**1. Backend on Render** — `render.yaml` at the repo root is a ready-to-use blueprint
+(New → Blueprint → pick this repo). Set these env vars in the Render dashboard after it's created:
+- `OPENAI_API_KEY`, `OPENAI_BASE_URL` — same values as your local `.env`
+- `ALLOWED_ORIGINS` — the Vercel URL from step 2 (set after step 2, once you know it; Render
+  redeploys automatically on env var changes)
+
+Note the backend's `https://<name>.onrender.com` URL once it's live.
+
+**2. Frontend on Vercel** — New Project → import this repo → set **Root Directory** to `web`. Add
+one env var before the first deploy:
+- `API_BASE_URL` — the Render URL from step 1 (e.g. `https://basismedic-api.onrender.com`)
+
+**3. Close the loop** — go back to Render and set `ALLOWED_ORIGINS` to the Vercel URL (e.g.
+`https://basismedic.vercel.app`), comma-separated if you have more than one (e.g. a preview URL).
+
+Free-tier Render services spin down on idle — the first request after a quiet period can take
+10–30s while it wakes up; this is expected, not a bug.
+
 ## Project layout
 
 ```
