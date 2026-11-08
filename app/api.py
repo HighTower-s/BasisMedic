@@ -2,14 +2,12 @@
 business logic here — parse request, call the service, map exceptions to status
 codes, same rule as app/cli.py (Constitution VI)."""
 
-from pathlib import Path
-
 from dotenv import load_dotenv
 
 load_dotenv()  # the CLI relies on the caller's shell having sourced .env; this edge loads it itself
 
 from fastapi import FastAPI
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from app.config import ConfigError
@@ -19,16 +17,12 @@ from app.triage_service import triage
 
 app = FastAPI(title="BasisMedic (experimental)")
 
-WEB_DIR = Path(__file__).resolve().parent.parent / "web"
+# The frontend is the Next.js app in web/ (run separately on :3000, proxying
+# /api/* to this server per web/next.config.ts) — this edge serves /api/* only.
 
 
 class TriageRequest(BaseModel):
     log: str
-
-
-@app.get("/")
-def index() -> FileResponse:
-    return FileResponse(WEB_DIR / "index.html")
 
 
 @app.post("/api/triage")
