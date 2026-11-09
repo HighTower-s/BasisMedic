@@ -9,6 +9,10 @@
 <p align="center">
   <img src="https://img.shields.io/badge/version-v1-FF4E45" alt="version v1">
   <img src="https://img.shields.io/github/last-commit/HighTower-s/BasisMedic?color=111114" alt="last commit">
+  <br>
+  <img src="https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white" alt="python">
+  <img src="https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white" alt="fastapi">
+  <img src="https://img.shields.io/badge/Next.js-111114?logo=next.js&logoColor=white" alt="next.js">
 </p>
 
 <p align="center"><a href="README.md">🇹🇭 ภาษาไทย</a> &middot; 🇬🇧 English</p>
