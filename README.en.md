@@ -1,6 +1,19 @@
-# BasisMedic
+<p align="center">
+  <img src="assets/logo.svg" alt="BasisMedic" width="140" />
+</p>
 
-[🇹🇭 ภาษาไทย](README.md) | 🇬🇧 English
+<h1 align="center">BasisMedic</h1>
+
+<p align="center"><i>Paste a log, get a verified answer — never a guess.</i></p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/version-v1-FF4E45" alt="version v1">
+  <img src="https://img.shields.io/github/last-commit/HighTower-s/BasisMedic?color=111114" alt="last commit">
+</p>
+
+<p align="center"><a href="README.md">🇹🇭 ภาษาไทย</a> &middot; 🇬🇧 English</p>
+
+---
 
 A measured, evaluated RAG + agent system that triages SAP Basis incidents. Paste an error log and
 get back a validated structured result — incident category, transaction codes to open in order,

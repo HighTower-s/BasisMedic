@@ -1,6 +1,19 @@
-# BasisMedic
+<p align="center">
+  <img src="assets/logo.svg" alt="BasisMedic" width="140" />
+</p>
 
-🇹🇭 ภาษาไทย | [🇬🇧 English](README.en.md)
+<h1 align="center">BasisMedic</h1>
+
+<p align="center"><i>วาง error log รับคำตอบที่ตรวจสอบแล้ว — ไม่เดา ไม่มั่ว</i></p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/version-v1-FF4E45" alt="version v1">
+  <img src="https://img.shields.io/github/last-commit/HighTower-s/BasisMedic?color=111114" alt="last commit">
+</p>
+
+<p align="center">🇹🇭 ภาษาไทย &middot; <a href="README.en.md">🇬🇧 English</a></p>
+
+---
 
 ระบบ RAG + agent ที่วัดผลและประเมินแล้ว สำหรับคัดกรองเหตุขัดข้อง (triage) ของ SAP Basis วาง error log
 เข้าไป แล้วได้ผลลัพธ์ที่ตรวจสอบแล้วแบบมีโครงสร้าง — หมวดของเหตุขัดข้อง, transaction code ที่ต้องเปิดตามลำดับ,
