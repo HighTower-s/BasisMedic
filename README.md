@@ -2,7 +2,7 @@
   <img src="assets/logo.svg" alt="BasisMedic" width="140" />
 </p>
 
-<h1 align="center">BasisMedic</h1>
+<h1 align="center"><img src="assets/logo.svg" alt="" width="34" align="absmiddle" /> BasisMedic</h1>
 
 <p align="center"><i>วาง error log รับคำตอบที่ตรวจสอบแล้ว — ไม่เดา ไม่มั่ว</i></p>
 
