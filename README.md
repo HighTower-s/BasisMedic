@@ -1,165 +1,161 @@
 # BasisMedic
 
-A measured, evaluated RAG + agent system that triages SAP Basis incidents. Paste an error log and
-get back a validated structured result — incident category, transaction codes to open in order,
-step-by-step checks, and citations — or an explicit "nothing relevant" refusal. Every citation and
-every T-code is verified by code against real evidence, never trusted from the model. This
-repository covers Features 1 and 2 of 3 for a university capstone project (*Building LLM-Powered
-Applications*):
+🇹🇭 ภาษาไทย | [🇬🇧 English](README.en.md)
 
-- **Feature 1** — the runbook corpus, the labelled evaluation set, and measured hybrid retrieval
-  (`search()`).
-- **Feature 2** — the triage agent: a bounded tool-calling loop built on top of `search()`,
-  producing a verified structured `TriageResult`, measured end-to-end against named baselines.
-- **Feature 3** — a FastAPI edge (`app/api.py`) and a Next.js web UI (`web/`): a landing page and a
-  triage chat interface, calling the same verified pipeline as the CLI.
+ระบบ RAG + agent ที่วัดผลและประเมินแล้ว สำหรับคัดกรองเหตุขัดข้อง (triage) ของ SAP Basis วาง error log
+เข้าไป แล้วได้ผลลัพธ์ที่ตรวจสอบแล้วแบบมีโครงสร้าง — หมวดของเหตุขัดข้อง, transaction code ที่ต้องเปิดตามลำดับ,
+ขั้นตอนตรวจสอบทีละขั้น, และ citation — หรือคำปฏิเสธที่ชัดเจนว่า "ไม่เกี่ยวข้อง" ทุก citation และทุก T-code
+ถูกตรวจสอบด้วยโค้ดเทียบกับหลักฐานจริง ไม่เคยเชื่อจากโมเดลเฉยๆ repository นี้ครอบคลุม 3 Feature สำหรับโปรเจค
+capstone ของมหาวิทยาลัย (*Building LLM-Powered Applications*):
 
-## Why
+- **Feature 1** — คลัง runbook, ชุดข้อมูลประเมินที่ gắn label ไว้, และ hybrid retrieval ที่วัดผลแล้ว
+  (`search()`)
+- **Feature 2** — triage agent: วง tool-calling loop ที่มีขอบเขตจำกัด สร้างต่อจาก `search()` ให้ผลลัพธ์
+  `TriageResult` แบบมีโครงสร้างที่ตรวจสอบแล้ว วัดผลแบบ end-to-end เทียบกับ baseline ที่ระบุชื่อไว้
+- **Feature 3** — FastAPI edge (`app/api.py`) และเว็บ UI แบบ Next.js (`web/`): หน้า landing page และ
+  หน้าแชตสำหรับ triage เรียกใช้ pipeline ที่ตรวจสอบแล้วชุดเดียวกับที่ CLI ใช้
 
-A triage assistant that is confidently wrong is worse than one that says "I don't know" — a
-plausible-sounding but wrong T-code sequence, acted on at 2am, is the worst possible output. This
-project exists to prove the retrieval underneath that assistant actually works, honestly measured
-against named baselines, before any language model ever touches the data — governed by three
-principles: Evaluation-First, Honest Reporting, Grounded Answers Only.
+## ทำไมต้องทำโปรเจคนี้
 
-## Setup
+ผู้ช่วย triage ที่ตอบผิดแบบมั่นใจนั้นแย่กว่าตัวที่บอกว่า "ไม่รู้" — ลำดับ T-code ที่ฟังดูสมเหตุสมผลแต่ผิด
+แล้วถูกนำไปใช้ตอนตี 2 คือผลลัพธ์ที่แย่ที่สุดที่เป็นไปได้ โปรเจคนี้มีไว้เพื่อพิสูจน์ว่า retrieval ที่อยู่เบื้องหลัง
+ผู้ช่วยตัวนี้ทำงานได้จริง วัดผลอย่างตรงไปตรงมาเทียบกับ baseline ที่ระบุชื่อไว้ ก่อนที่โมเดลภาษาใดๆ จะได้แตะ
+ข้อมูลเลย — ยึดตามหลักการ 3 ข้อ: Evaluation-First (วัดผลก่อนเสมอ), Honest Reporting (รายงานตามจริง),
+Grounded Answers Only (ตอบจากหลักฐานเท่านั้น)
+
+## ติดตั้ง
 
 ```bash
 uv sync
 cp .env.example .env        # Windows: copy .env.example .env
-# fill in OPENAI_API_KEY for dense/hybrid search; bm25 mode needs no key at all
+# ใส่ OPENAI_API_KEY สำหรับโหมด dense/hybrid search; โหมด bm25 ไม่ต้องใช้ key เลย
 ```
 
-## Build the index
+## สร้าง index
 
 ```bash
-uv run python -m app.cli ingest --strategy fixed     # with embeddings (needs OPENAI_API_KEY)
-uv run python -m app.cli ingest --strategy fixed --no-embed   # bm25-only, no network
+uv run python -m app.cli ingest --strategy fixed     # พร้อม embeddings (ต้องมี OPENAI_API_KEY)
+uv run python -m app.cli ingest --strategy fixed --no-embed   # bm25 อย่างเดียว ไม่ต้องต่อเน็ต
 ```
 
-Rebuilding is atomic — a failed build (e.g. gateway down mid-embed) leaves the previous index
-intact. Embeddings are cached on disk (`data/cache/`, git-ignored) keyed by content, so a rebuild
-with no corpus changes costs zero gateway calls.
+การ rebuild เป็นแบบ atomic — ถ้า build ล้มเหลว (เช่น gateway ล่มระหว่างทำ embed) index เดิมจะยังอยู่ครบ
+Embeddings ถูก cache ไว้บน disk (`data/cache/`, อยู่ใน .gitignore) โดย key ตามเนื้อหา ดังนั้นถ้า rebuild
+โดยที่ corpus ไม่เปลี่ยนจะไม่เสียค่าเรียก gateway เลย
 
-## Search
+## ค้นหา (Search)
 
 ```bash
 uv run python -m app.cli search --file examples/tsv_dump.log --mode hybrid
-uv run python -m app.cli search "paste a log or free-text description here"
-uv run python -m app.cli search --file examples/hana_disk_full.log --mode hybrid   # explicit refusal
+uv run python -m app.cli search "วาง log หรือคำอธิบายแบบข้อความอิสระที่นี่"
+uv run python -m app.cli search --file examples/hana_disk_full.log --mode hybrid   # ตัวอย่างการปฏิเสธ
 ```
 
-`--mode` is `bm25` (no network), `dense`, or `hybrid` (default). A result that clears the
-relevance floor returns up to 3 hits, each with a `doc_id#section` address that resolves to real
-corpus text. A log the corpus does not cover returns `NO_RELEVANT_RUNBOOK` with exit code 0 — a
-correct refusal is a success, not an error.
+`--mode` เลือกได้เป็น `bm25` (ไม่ต่อเน็ต), `dense`, หรือ `hybrid` (ค่า default) ผลลัพธ์ที่ผ่านเกณฑ์
+ความเกี่ยวข้องจะคืนสูงสุด 3 รายการ แต่ละรายการมี address แบบ `doc_id#section` ที่ชี้ไปยังเนื้อหา corpus จริง
+log ที่ corpus ไม่ครอบคลุมจะคืนค่า `NO_RELEVANT_RUNBOOK` พร้อม exit code 0 — การปฏิเสธที่ถูกต้องถือเป็น
+ความสำเร็จ ไม่ใช่ข้อผิดพลาด
 
 ## Triage (Feature 2)
 
 ```bash
 uv run python -m app.cli triage --file examples/tsv_dump.log --show-trace
-uv run python -m app.cli triage "paste a log here"
-uv run python -m app.cli triage --file examples/hana_disk_full.log   # explicit refusal, forced in code
+uv run python -m app.cli triage "วาง log ที่นี่"
+uv run python -m app.cli triage --file examples/hana_disk_full.log   # ตัวอย่างการปฏิเสธ บังคับไว้ในโค้ด
 ```
 
-A native tool-calling loop (`search_runbook`, `lookup_tcode`; `MAX_STEPS=5`, read-only,
-allow-listed) gathers evidence, then a no-tools formatter call produces a structured result with a
-capped repair loop and a deterministic fallback on exhaustion. Before the result is returned:
-every citation is checked against evidence actually retrieved that request (a fabricated one is
-dropped), every T-code is checked against the allow-list (an unverified one is flagged, not
-silently trusted), and if retrieval found nothing at all the category is forced to `out_of_scope`
-in code — never left for the model to decide. `--show-trace` prints every tool call made, to
-stderr, for diagnosing a surprising answer.
+tool-calling loop ของตัวเอง (`search_runbook`, `lookup_tcode`; `MAX_STEPS=5`, อ่านอย่างเดียว, อยู่ใน
+allow-list) จะรวบรวมหลักฐาน จากนั้นเรียก formatter แบบไม่มี tools เพื่อสร้างผลลัพธ์แบบมีโครงสร้าง พร้อมวง
+ซ่อมแซม (repair loop) ที่จำกัดจำนวนรอบ และ fallback ที่แน่นอนเมื่อหมดรอบ ก่อนส่งผลลัพธ์กลับ:
+ทุก citation ถูกตรวจสอบกับหลักฐานที่ค้นเจอจริงในคำขอนั้น (citation ที่กุขึ้นมาจะถูกตัดทิ้ง), ทุก T-code
+ถูกตรวจสอบกับ allow-list (ตัวที่ไม่ผ่านจะถูก flag ไว้ ไม่ใช่เชื่อไปเฉยๆ), และถ้า retrieval ไม่เจออะไรเลย
+category จะถูกบังคับเป็น `out_of_scope` ด้วยโค้ด — ไม่ปล่อยให้โมเดลตัดสินใจเอง `--show-trace` จะพิมพ์
+tool call ทุกตัวที่เรียกไปยัง stderr เพื่อช่วยวินิจฉัยเวลาเจอคำตอบที่ดูแปลกๆ
 
-## Evaluate
+## ประเมินผล (Evaluate)
 
 ```bash
 uv run python -m eval.run_all
 ```
 
-Single command, zero arguments by design (the experiment matrix lives in code, so a committed
-number always corresponds to a committed matrix). Runs, in order:
+คำสั่งเดียว ไม่มี argument โดยตั้งใจ (matrix ของการทดลองอยู่ในโค้ด ดังนั้นตัวเลขที่ commit ไว้จะตรงกับ
+matrix ที่ commit ไว้เสมอ) รันตามลำดับ:
 
-- **E1** — naive fixed-800/150 chunking vs section-aligned chunking, pre-gate, winner chosen from
-  the **dev split only**
-- **E2** — bm25 vs dense vs hybrid on E1's winner, pre-gate, against two named baselines
-- **E3** — a `MIN_SCORE` sweep on the **dev split only** (mechanically refuses to touch the test
-  set — `sweep_min_score("test")` raises)
-- the **headline** test-set result at the chosen floor, post-gate
-- **E4** — the full triage agent vs two named baselines (`E-NoRAG`: no retrieval at all;
-  `E-ClassicRAG`: one non-agentic search, no loop), end-to-end, all through the identical
-  verification pipeline
-- `eval/results/failures.jsonl` — every wrong/fallback/unverified case, retrieval- and
-  agent-level, each with a failure type
+- **E1** — เทียบ chunking แบบ fixed-800/150 ธรรมดา กับแบบ section-aligned ก่อนเข้า gate เลือกผู้ชนะจาก
+  **dev split เท่านั้น**
+- **E2** — เทียบ bm25 vs dense vs hybrid บนตัวชนะจาก E1 ก่อนเข้า gate เทียบกับ baseline ที่ระบุชื่อ 2 ตัว
+- **E3** — sweep หาค่า `MIN_SCORE` บน **dev split เท่านั้น** (ห้ามแตะ test set โดยกลไก —
+  `sweep_min_score("test")` จะ raise error)
+- ผลลัพธ์ **headline** บน test set ที่ threshold ที่เลือกไว้ หลังผ่าน gate แล้ว
+- **E4** — triage agent เต็มรูปแบบเทียบกับ baseline ที่ระบุชื่อ 2 ตัว (`E-NoRAG`: ไม่มี retrieval เลย;
+  `E-ClassicRAG`: ค้นครั้งเดียวแบบไม่ใช่ agent ไม่มี loop) แบบ end-to-end ผ่าน verification pipeline
+  เดียวกันทั้งหมด
+- `eval/results/failures.jsonl` — ทุกเคสที่ผิด/fallback/ไม่ผ่าน verify ทั้งระดับ retrieval และ agent
+  พร้อมระบุประเภทความผิดพลาด
 
-Every number is written to `eval/results/*.json` next to the exact config that produced it
-(`corpus_sha`, `git_commit`, mode, chunk strategy/`k`/`min_score` for retrieval, `max_steps`/
-`repair_attempts`/`chat_model` for the agent). Run it twice — both the retrieval and the agent's
-verification-level outcomes are byte-identical, the agent via a content-addressed chat-completion
-cache (`data/chat_cache/`, git-ignored) mirroring the embedding cache.
+ทุกตัวเลขถูกเขียนลง `eval/results/*.json` คู่กับ config ที่ใช้สร้างตัวเลขนั้นเป๊ะๆ (`corpus_sha`,
+`git_commit`, mode, chunk strategy/`k`/`min_score` สำหรับ retrieval, `max_steps`/`repair_attempts`/
+`chat_model` สำหรับ agent) รันซ้ำสองครั้ง — ผลลัพธ์ระดับ verification ทั้งของ retrieval และ agent จะ
+เหมือนกันทุก byte เพราะ agent ใช้ cache แบบ content-addressed สำหรับ chat-completion
+(`data/chat_cache/`, อยู่ใน .gitignore) เลียนแบบ cache ของ embedding
 
-## Results (test split, post-gate, headline configuration)
+## ผลลัพธ์ (test split, หลังผ่าน gate, การตั้งค่า headline)
 
-Full tables with deltas against baselines, the dev sweep, per-difficulty slices, the verdict, and
-Limitations: **[`eval/results/results.md`](eval/results/results.md)**. Headline numbers as last
-measured:
+ตารางเต็มพร้อม delta เทียบ baseline, dev sweep, breakdown ตามระดับความยาก, คำตัดสิน, และ Limitations:
+**[`eval/results/results.md`](eval/results/results.md)** ตัวเลข headline ล่าสุดที่วัดได้:
 
-| metric | value |
+| metric | ค่า |
 |---|---|
-| mode / chunking / min_score | `hybrid` / `fixed` / `0.60` (all three measured, not guessed — see results.md) |
-| recall@3 (post-gate) | 0.808 |
-| MRR (post-gate) | 0.788 |
-| out-of-scope gate accuracy | 1.000 |
-| false refusal rate | 0.154 |
+| mode / chunking / min_score | `hybrid` / `fixed` / `0.60` (วัดทั้ง 3 ค่าจริง ไม่ได้เดา — ดู results.md) |
+| recall@3 (หลังผ่าน gate) | 0.808 |
+| MRR (หลังผ่าน gate) | 0.788 |
+| ความแม่นยำของ out-of-scope gate | 1.000 |
+| อัตราปฏิเสธผิด (false refusal rate) | 0.154 |
 
-Pre-gate, hybrid beats both named baselines on the test split (0.962 recall@3 vs R-BM25's 0.846
-and R-Dense-naive's 0.942). The 0.60 relevance floor — chosen from the dev sweep, not guessed — is
-what correctly refuses out-of-scope queries (verified against a HANA log-volume alert that an
-earlier, unvalidated 0.40 default let through); it costs a 0.154 false-refusal rate on in-scope
-hard cases with no exact error code, reported rather than hidden.
+ก่อนเข้า gate hybrid ชนะ baseline ที่ระบุชื่อทั้งคู่บน test split (recall@3 0.962 เทียบกับ R-BM25 ที่
+0.846 และ R-Dense-naive ที่ 0.942) เกณฑ์ความเกี่ยวข้อง 0.60 — เลือกจาก dev sweep ไม่ได้เดา — คือสิ่งที่
+ทำให้ปฏิเสธ query ที่ไม่เกี่ยวข้องได้ถูกต้อง (ยืนยันด้วย log แจ้งเตือน HANA log-volume ที่ค่า default
+0.40 เดิมที่ไม่ผ่านการ validate เคยปล่อยให้ผ่านมา) แลกมาด้วยอัตราปฏิเสธผิด 0.154 ในเคสยากที่อยู่ใน scope
+แต่ไม่มีรหัส error ตรงๆ — รายงานไว้ตามจริง ไม่ปิดบัง
 
 ### End-to-end (Feature 2, test split, n=30)
 
 | config | category_accuracy | tcode_recall | unverified_claim_rate | valid_output_rate |
 |---|---|---|---|---|
-| E-NoRAG (no retrieval) | 0.600 | 0.154 | 0.767 | 0.933 |
-| E-ClassicRAG (one search, no loop) | 0.700 | 0.442 | 0.767 | 1.000 |
-| **agent** (full bounded loop) | 0.567 | 0.365 | 0.467 | 0.967 |
+| E-NoRAG (ไม่มี retrieval) | 0.600 | 0.154 | 0.767 | 0.933 |
+| E-ClassicRAG (ค้นครั้งเดียว ไม่มี loop) | 0.700 | 0.442 | 0.767 | 1.000 |
+| **agent** (bounded loop เต็มรูปแบบ) | 0.567 | 0.365 | 0.467 | 0.967 |
 
-**Stated plainly, not reframed**: the full agent does **not** beat either named baseline on
-category accuracy or T-code recall — `E-ClassicRAG`, a single non-agentic search, scores higher on
-both. The agent does win on `unverified_claim_rate` (0.467 vs 0.767 for both baselines): it is
-measurably more cautious about what it asserts, even though it is less often right overall. This is
-a genuine finding about this small course-gateway model's tool-use reliability, not a defect in the
-verification layer — see `eval/results/results.md` § Limitations.
+**พูดตรงๆ ไม่ปรุงแต่ง**: agent เต็มรูปแบบ **ไม่** ชนะ baseline ที่ระบุชื่อทั้งคู่ในแง่ category accuracy
+หรือ T-code recall — `E-ClassicRAG` ซึ่งค้นแบบ non-agentic ครั้งเดียว ได้คะแนนสูงกว่าทั้งสองด้าน แต่ agent
+ชนะใน `unverified_claim_rate` (0.467 เทียบกับ 0.767 ของ baseline ทั้งคู่): มันระมัดระวังในสิ่งที่ยืนยัน
+มากกว่าอย่างชัดเจน แม้จะตอบถูกน้อยกว่าโดยรวมก็ตาม นี่คือข้อค้นพบจริงเกี่ยวกับความน่าเชื่อถือในการใช้ tool
+ของโมเดลขนาดเล็กตัวนี้ ไม่ใช่ข้อบกพร่องของ verification layer — ดู `eval/results/results.md` § Limitations
 
-## Search latency (SC-013)
+## ความหน่วงในการค้นหา (SC-013)
 
-Measured on the author's machine, `--mode hybrid` (one query-embedding round trip to the gateway,
-dominating the cost): **typically 1.4–1.5 s**, comfortably under the 3 s interactive target. One
-outlier of 7.2 s was observed during a slow gateway response — reported here rather than
-smoothed over, since it is a real, if infrequent, latency tail the gateway can produce.
-`--mode bm25` has no network call and is dominated by Python/`uv` startup (~2.1 s cold), not by
-search itself.
+วัดบนเครื่องของผู้พัฒนา โหมด `--mode hybrid` (round trip หนึ่งครั้งไปยัง gateway สำหรับ embed query ซึ่ง
+เป็นต้นทุนหลัก): **โดยทั่วไป 1.4–1.5 วินาที** ต่ำกว่าเป้าหมาย 3 วินาทีสำหรับการใช้งานแบบ interactive
+สบายๆ มีค่า outlier หนึ่งครั้งที่ 7.2 วินาทีจากการตอบสนองช้าของ gateway — รายงานไว้ตามจริงแทนที่จะกลบไว้
+เพราะเป็น latency tail ที่เกิดขึ้นจริงแม้จะไม่บ่อย `--mode bm25` ไม่มีการเรียกเน็ตเวิร์กเลย เวลาส่วนใหญ่
+มาจากการ startup ของ Python/`uv` (ประมาณ 2.1 วินาทีตอน cold start) ไม่ใช่จากการค้นหาเอง
 
-## Limitations
+## ข้อจำกัด (Limitations)
 
-- All eval-case logs are **synthetic**, written to resemble real SAP Basis error formats.
-- The corpus covers 16 runbooks across 8 incident categories only; anything outside that scope has
-  no chance of a correct answer regardless of retrieval quality.
-- Single-author bias in both the runbooks and the eval-case labels.
-- The BM25 tokenizer (`[A-Za-z0-9_/]+`) cannot segment Thai text — Thai queries are carried
-  entirely by the dense/embedding side.
-- The agent's `sources` citations are frequently empty even when the trace shows it used the
-  retrieved evidence — a model-citation-discipline gap on `gemma-4-E4B-it`, not a verification bug
-  (a *fabricated* citation is reliably caught and dropped; an *omitted* one is not currently
-  flagged as a separate failure mode).
-- A log describing two simultaneous problems gets one category — the schema has no multi-label
-  support; handled without crashing, reported as a known finding (spec SC-010), not hidden.
+- log ของทุกเคสประเมินเป็นข้อมูล **สังเคราะห์ (synthetic)** เขียนให้คล้ายรูปแบบ error จริงของ SAP Basis
+- corpus ครอบคลุมแค่ 16 runbook ใน 8 หมวดเหตุขัดข้องเท่านั้น สิ่งที่อยู่นอกขอบเขตนี้ไม่มีทางได้คำตอบถูก
+  เลยไม่ว่าคุณภาพของ retrieval จะดีแค่ไหน
+- มี bias จากผู้เขียนคนเดียวทั้งใน runbook และ label ของชุดข้อมูลประเมิน
+- BM25 tokenizer (`[A-Za-z0-9_/]+`) ตัดคำภาษาไทยไม่ได้ — query ภาษาไทยจึงพึ่งพาฝั่ง dense/embedding
+  ทั้งหมด
+- citation ใน `sources` ของ agent มักว่างเปล่าแม้ trace จะแสดงว่าใช้หลักฐานที่ค้นเจอจริง — เป็นช่องว่างด้าน
+  วินัยการอ้างอิงของโมเดล `gemma-4-E4B-it` ไม่ใช่บั๊กของ verification (citation ที่**กุขึ้นมา**ถูกจับได้และ
+  ตัดทิ้งอย่างน่าเชื่อถือ แต่ citation ที่**ถูกละไว้**ยังไม่ถูก flag เป็น failure mode แยกต่างหากในตอนนี้)
+- log ที่อธิบายปัญหา 2 อย่างพร้อมกันจะได้ category เดียว — schema ไม่รองรับ multi-label จัดการโดยไม่ crash
+  และรายงานไว้เป็นข้อค้นพบที่ทราบอยู่แล้ว (spec SC-010) ไม่ปิดบัง
 
-Full detail: [`eval/results/results.md`](eval/results/results.md) § Limitations.
+รายละเอียดเต็ม: [`eval/results/results.md`](eval/results/results.md) § Limitations
 
-## Web UI (Feature 3)
+## เว็บ UI (Feature 3)
 
 ```bash
 uv sync --extra api
@@ -167,48 +163,48 @@ uv run uvicorn app.api:app --port 8000          # terminal 1 — backend
 cd web && npm install && npm run dev             # terminal 2 — http://localhost:3000
 ```
 
-The Next.js dev server proxies `/api/*` to the FastAPI backend on `:8000` (same-origin, no CORS —
-see `web/next.config.ts`). `/` is the landing page, `/triage` is the chat interface; both call the
-same verified `triage()` pipeline the CLI uses.
+Next.js dev server จะ proxy `/api/*` ไปยัง FastAPI backend ที่ `:8000` (same-origin ไม่ต้องตั้ง CORS —
+ดู `web/next.config.ts`) `/` คือหน้า landing page, `/triage` คือหน้าแชต ทั้งคู่เรียกใช้ pipeline `triage()`
+ที่ตรวจสอบแล้วชุดเดียวกับที่ CLI ใช้
 
-### Deploying (Render + Vercel)
+### Deploy (Render + Vercel)
 
-Backend and frontend deploy separately, on different origins — unlike local dev they can't share
-`localhost`, so two things bridge the gap: `API_BASE_URL` (frontend → backend) and `ALLOWED_ORIGINS`
-(backend's CORS allow-list, since the frontend now calls a different origin instead of same-origin
-through the dev proxy).
+Backend กับ frontend deploy แยกกัน อยู่คนละ origin — ต่างจาก local dev ที่ใช้ `localhost` ร่วมกันได้
+จึงต้องมี 2 ตัวแปรเชื่อมช่องว่างนี้: `API_BASE_URL` (frontend → backend) และ `ALLOWED_ORIGINS`
+(CORS allow-list ของ backend เพราะตอนนี้ frontend เรียกไปอีก origin หนึ่ง แทนที่จะเป็น same-origin ผ่าน
+dev proxy)
 
-**1. Backend on Render** — `render.yaml` at the repo root is a ready-to-use blueprint
-(New → Blueprint → pick this repo). Set these env vars in the Render dashboard after it's created:
-- `OPENAI_API_KEY`, `OPENAI_BASE_URL` — same values as your local `.env`
-- `ALLOWED_ORIGINS` — the Vercel URL from step 2 (set after step 2, once you know it; Render
-  redeploys automatically on env var changes)
+**1. Backend บน Render** — `render.yaml` ที่ root ของ repo คือ blueprint พร้อมใช้
+(New → Blueprint → เลือก repo นี้) ตั้งค่า env var เหล่านี้ใน Render dashboard หลังสร้างเสร็จ:
+- `OPENAI_API_KEY`, `OPENAI_BASE_URL` — ใช้ค่าเดียวกับ `.env` ในเครื่อง
+- `ALLOWED_ORIGINS` — URL ของ Vercel จากขั้นตอนที่ 2 (ตั้งหลังทำขั้นตอน 2 เสร็จ เมื่อรู้ URL แล้ว; Render
+  จะ redeploy ให้เองอัตโนมัติเมื่อ env var เปลี่ยน)
 
-Note the backend's `https://<name>.onrender.com` URL once it's live.
+จด URL ของ backend ที่ได้ (`https://<name>.onrender.com`) ไว้หลัง deploy เสร็จ
 
-**2. Frontend on Vercel** — New Project → import this repo → set **Root Directory** to `web`. Add
-one env var before the first deploy:
-- `API_BASE_URL` — the Render URL from step 1 (e.g. `https://basismedic-api.onrender.com`)
+**2. Frontend บน Vercel** — New Project → import repo นี้ → ตั้ง **Root Directory** เป็น `web`
+เพิ่ม env var ตัวนี้ก่อน deploy ครั้งแรก:
+- `API_BASE_URL` — URL ของ Render จากขั้นตอนที่ 1 (เช่น `https://basismedic-api.onrender.com`)
 
-**3. Close the loop** — go back to Render and set `ALLOWED_ORIGINS` to the Vercel URL (e.g.
-`https://basismedic.vercel.app`), comma-separated if you have more than one (e.g. a preview URL).
+**3. ปิดวงให้ครบ** — กลับไปที่ Render แล้วตั้ง `ALLOWED_ORIGINS` เป็น URL ของ Vercel (เช่น
+`https://basismedic.vercel.app`) คั่นด้วย comma ถ้ามีมากกว่า 1 URL (เช่น preview URL)
 
-Free-tier Render services spin down on idle — the first request after a quiet period can take
-10–30s while it wakes up; this is expected, not a bug.
+Render free tier จะ sleep เมื่อไม่มีคนใช้งาน — request แรกหลังจากเงียบไปสักพักอาจใช้เวลา 10–30 วินาที
+กว่าจะตื่น ถือเป็นเรื่องปกติ ไม่ใช่บั๊ก
 
-## Project layout
+## โครงสร้างโปรเจค
 
 ```
-app/            config, llm (chat + embed, the only gateway caller), normalize, cli, api (Feature 3 edge),
+app/            config, llm (chat + embed, ตัวเดียวที่เรียก gateway), normalize, cli, api (Feature 3 edge),
                 retrieval/ (Feature 1), agent/ (Feature 2: tools, loop, formatter, verify, fallback),
-                triage_service.py (Feature 2 service entry point)
-data/           runbooks/, tcodes.json, index/ (generated, committed), cache/ + chat_cache/ (generated, ignored)
+                triage_service.py (จุดเข้า service ของ Feature 2)
+data/           runbooks/, tcodes.json, index/ (สร้างไว้แล้ว, commit ไว้), cache/ + chat_cache/ (สร้างเอง, ไม่ commit)
 eval/           cases_dev.jsonl, cases_test.jsonl, schema, metrics, run_retrieval, run_e2e, run_all, results/
-examples/       sample logs for the commands above (never runbook text)
-tests/          offline, gateway mocked — uv run pytest
-web/            Next.js app (landing page + triage chat), consumes app/api.py
+examples/       ตัวอย่าง log สำหรับคำสั่งด้านบน (ไม่ใช่เนื้อหา runbook)
+tests/          offline, mock gateway — uv run pytest
+web/            Next.js app (landing page + triage chat), เรียกใช้ app/api.py
 ```
 
-## Out of scope
+## สิ่งที่อยู่นอกขอบเขต
 
-Multi-turn conversation, connecting to a live SAP system, and executing any fix.
+การสนทนาแบบหลายรอบ (multi-turn), การเชื่อมต่อกับระบบ SAP จริง, และการสั่งแก้ไขปัญหาใดๆ
