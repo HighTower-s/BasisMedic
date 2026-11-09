@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160">
+  <rect x="2" y="2" width="156" height="156" rx="30" fill="#FAFAF9" stroke="#11111424" stroke-width="2"/>
+  <!-- 3x3 dot grid: fg, red, empty, red, red, red, fg, red, empty -->
+  <rect x="32" y="32" width="28" height="28" rx="7" fill="#111114"/>
+  <rect x="66" y="32" width="28" height="28" rx="7" fill="#FF4E45"/>
+  <rect x="32" y="66" width="28" height="28" rx="7" fill="#FF4E45"/>
+  <rect x="66" y="66" width="28" height="28" rx="7" fill="#FF4E45"/>
+  <rect x="100" y="66" width="28" height="28" rx="7" fill="#FF4E45"/>
+  <rect x="32" y="100" width="28" height="28" rx="7" fill="#111114"/>
+  <rect x="66" y="100" width="28" height="28" rx="7" fill="#FF4E45"/>
+</svg>
