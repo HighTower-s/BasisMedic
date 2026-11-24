@@ -19,6 +19,16 @@
 
 ---
 
+https://github.com/user-attachments/assets/91bcb398-a18b-4eb0-ad60-700fec455f99
+
+<br>
+<div align="center" margin="30px">
+  
+  **Web Demo:**  [BasisMedic Web App](https://basis-medic.vercel.app/)
+
+</div>
+<br>
+
 A measured, evaluated RAG + agent system that triages SAP Basis incidents. Paste an error log and
 get back a validated structured result — incident category, transaction codes to open in order,
 step-by-step checks, and citations — or an explicit "nothing relevant" refusal. Every citation and

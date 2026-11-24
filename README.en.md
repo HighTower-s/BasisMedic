@@ -19,6 +19,16 @@
 
 ---
 
+https://github.com/user-attachments/assets/91bcb398-a18b-4eb0-ad60-700fec455f99
+
+<br>
+<div align="center" margin="30px">
+  
+  **Web Demo:**  [BasisMedic Web App](https://basis-medic.vercel.app/)
+
+</div>
+<br>
+
 ระบบ RAG + agent ที่วัดผลและประเมินแล้ว สำหรับคัดกรองเหตุขัดข้อง (triage) ของ SAP Basis วาง error log
 เข้าไป แล้วได้ผลลัพธ์ที่ตรวจสอบแล้วแบบมีโครงสร้าง — หมวดของเหตุขัดข้อง, transaction code ที่ต้องเปิดตามลำดับ,
 ขั้นตอนตรวจสอบทีละขั้น, และ citation — หรือคำปฏิเสธที่ชัดเจนว่า "ไม่เกี่ยวข้อง" ทุก citation และทุก T-code
